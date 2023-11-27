@@ -8,6 +8,7 @@ import ParticlesBg from 'particles-bg';
 import { Component } from 'react';
 import Clarifai from 'clarifai';
 import SignIn from './components/SignIn/SignIn';
+import Register from './components/Register/Register';
 
 const returnClarifaiRequestOptions = (imageUrl) => {
   ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,6 +70,8 @@ class App extends Component {
       input: '',
       imageUrl: '',
       box: {},
+      route: 'home',
+      isSignedIn: false,
     };
   }
 
@@ -133,18 +136,35 @@ class App extends Component {
   };
 
   render() {
+    const { isSignedIn, imageUrl, route, box } = this.state;
     return (
       <div className="App">
         <ParticlesBg className="particles" type="cobweb" bg={true} />
-        <Navigation />
-        <SignIn />
-        <Logo />
-        <Rank />
-        <ImageLinkForm
-          onInputChange={this.onInputChange}
-          onButtonSubmit={this.onButtonSubmit}
+        <Navigation
+          isSignedIn={isSignedIn}
+          onRouteChange={this.onRouteChange}
         />
-        <FaceRecognition imageUrl={this.state.imageUrl} box={this.state.box} />
+        {route === 'home' ? (
+          <div>
+            <Logo />
+            <Rank
+            // name={this.state.user.name}
+            // entries={this.state.user.entries}
+            />
+            <ImageLinkForm
+              onInputChange={this.onInputChange}
+              onButtonSubmit={this.onButtonSubmit}
+            />
+            <FaceRecognition box={box} imageUrl={imageUrl} />
+          </div>
+        ) : route === 'signIn' ? (
+          <SignIn loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
+        ) : (
+          <Register
+            loadUser={this.loadUser}
+            onRouteChange={this.onRouteChange}
+          />
+        )}
       </div>
     );
   }
